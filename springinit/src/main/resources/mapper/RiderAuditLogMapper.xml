@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.springinit.mapper.RiderAuditLogMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.springinit.pojo.RiderAuditLog">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="rider_id" property="riderId" jdbcType="BIGINT"/>
+        <result column="admin_id" property="adminId" jdbcType="BIGINT"/>
+        <result column="audit_status" property="auditStatus" jdbcType="TINYINT"/>
+        <result column="audit_opinion" property="auditOpinion" jdbcType="VARCHAR"/>
+        <result column="audit_time" property="auditTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="org.example.springinit.pojo.RiderAuditLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_rider_audit_log (
+        rider_id, admin_id, audit_status, audit_opinion, audit_time
+        ) VALUES (
+        #{riderId}, #{adminId}, #{auditStatus}, #{auditOpinion}, NOW()
+        )
+    </insert>
+</mapper>

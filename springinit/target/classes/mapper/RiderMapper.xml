@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.springinit.mapper.RiderMapper">
+
+    <resultMap id="BaseResultMap" type="org.example.springinit.pojo.Rider">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="id_card" property="idCard" jdbcType="VARCHAR"/>
+        <result column="delivery_area" property="deliveryArea" jdbcType="VARCHAR"/>
+        <result column="id_card_front" property="idCardFront" jdbcType="VARCHAR"/>
+        <result column="id_card_back" property="idCardBack" jdbcType="VARCHAR"/>
+        <result column="health_certificate" property="healthCertificate" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, username, password, phone, id_card, delivery_area, id_card_front, id_card_back, health_certificate, status
+    </sql>
+
+    <!-- 根据手机号查询骑手 -->
+    <select id="selectByPhone" parameterType="string" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_rider
+        WHERE phone = #{phone}
+    </select>
+
+    <!-- 根据身份证号查询骑手 -->
+    <select id="selectByIdCard" parameterType="string" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_rider
+        WHERE id_card = #{idCard}
+    </select>
+
+    <!-- 新增骑手 -->
+    <insert id="insert" parameterType="org.example.springinit.pojo.Rider" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_rider (
+        username, password, phone, id_card, delivery_area,
+        id_card_front, id_card_back, health_certificate, status
+        ) VALUES (
+        #{username}, #{password}, #{phone}, #{idCard}, #{deliveryArea},
+        #{idCardFront}, #{idCardBack}, #{healthCertificate}, 0
+        )
+    </insert>
+
+    <!-- 查询待审核骑手总数 -->
+    <select id="countPendingAuditRiders" resultType="java.lang.Long">
+        SELECT COUNT(1) FROM t_rider WHERE status = 0
+    </select>
+
+    <!-- 查询待审核骑手列表（修正分页表达式） -->
+    <select id="selectPendingAuditRiders" parameterType="org.example.springinit.DTO.RiderPendingAuditDTO" resultMap="BaseResultMap">
+        <bind name="offset" value="(pageNum - 1) * pageSize"/>
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_rider
+        WHERE status = 0
+        ORDER BY create_time DESC
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 更新骑手状态 -->
+    <update id="updateRiderStatus">
+        UPDATE t_rider
+        SET status = #{status}, update_time = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据骑手ID查询单条数据（修正FROM子句和字段名） -->
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM t_rider
+        WHERE id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.example.springinit.mapper.OrderMapper">
+
+    <!-- 结果映射：数据库字段 → Java实体字段 -->
+    <resultMap id="BaseResultMap" type="org.example.springinit.pojo.Order">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="sender_id" property="senderId" jdbcType="BIGINT"/>
+        <result column="rider_id" property="riderId" jdbcType="BIGINT"/>
+        <result column="sender_name" property="senderName" jdbcType="VARCHAR"/>
+        <result column="sender_phone" property="senderPhone" jdbcType="VARCHAR"/>
+        <result column="sender_address" property="senderAddress" jdbcType="VARCHAR"/>
+        <result column="receiver_name" property="receiverName" jdbcType="VARCHAR"/>
+        <result column="receiver_phone" property="receiverPhone" jdbcType="VARCHAR"/>
+        <result column="receiver_address" property="receiverAddress" jdbcType="VARCHAR"/>
+        <result column="order_type" property="orderType" jdbcType="TINYINT"/>
+        <result column="goods_desc" property="goodsDesc" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="accept_time" property="acceptTime" jdbcType="TIMESTAMP"/>
+        <result column="pickup_time" property="pickupTime" jdbcType="TIMESTAMP"/>
+        <result column="deliver_time" property="deliverTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 通用查询列 -->
+    <sql id="Base_Column_List">
+        id, order_no, sender_id, rider_id, sender_name, sender_phone, sender_address, receiver_name, receiver_phone, receiver_address, order_type, goods_desc, amount, status, create_time, accept_time, pickup_time, deliver_time
+    </sql>
+
+    <!-- 新增订单 -->
+    <insert id="insert" parameterType="org.example.springinit.pojo.Order" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_order (
+            order_no, sender_id, sender_name, sender_phone, sender_address,
+            receiver_name, receiver_phone, receiver_address, order_type, goods_desc,
+            amount, status, create_time
+        ) VALUES (
+                     #{orderNo}, #{senderId}, #{senderName}, #{senderPhone}, #{senderAddress},
+                     #{receiverName}, #{receiverPhone}, #{receiverAddress}, #{orderType}, #{goodsDesc},
+                     #{amount}, #{status}, NOW()
+                 )
+    </insert>
+
+    <!-- 根据订单编号查询订单 -->
+    <select id="selectByOrderNo" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM t_order
+        WHERE order_no = #{orderNo}
+    </select>
+</mapper>
